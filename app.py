@@ -7,7 +7,5 @@ page = AllEventsPage(page_content)
 
 out = []
 events = page.events
-for event in events:
-    out.append(event)
-    print(event)
-print(len(out))
+
+

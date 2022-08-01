@@ -2,18 +2,25 @@ import psycopg2.extras  # to read as dictionary
 
 
 class DatabaseConnection:
+    """
+    Context Manager Class
+    Creates the connection to the Database
+    Manages the commit
+    Closes the Database connection
+    """
+
     def __init__(self):
         self.connection = None
 
     def __enter__(self):
-        password = input('Please enter Postgres password: ')
+        # password = input('Please enter Postgres password: ')
 
         try:
             self.connection = psycopg2.connect(
                 host='127.0.0.1',
                 database='Data_Hive',
                 user='postgres',
-                password=password,
+                password='1Thesaint',
                 port='5432'
             )
             cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
