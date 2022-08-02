@@ -1,3 +1,6 @@
+import numpy as np
+
+from collections import Counter
 from Utils.Database_Connection import DatabaseConnection
 from Utils.menu import EventRecord
 
@@ -7,6 +10,9 @@ class DatabaseTransaction:
     creates cursor from the Database Connection
     Manages all transactions to the Database
     """
+
+    def __init__(self):
+        self.all_data_list = None
 
     @staticmethod
     def create_table():
@@ -37,11 +43,11 @@ class DatabaseTransaction:
 
             for item in insert_values:
                 cursor.execute(insert_script, item)
+            print('Data inserted successfully')
 
-    @staticmethod
-    def read_data():
+    def read_data(self):
         data_dict = dict()
-        all_data_list = []
+        self.all_data_list = []
         with DatabaseConnection() as cursor:
             cursor.execute('SELECT * FROM crawled_event_data')
             for record in cursor.fetchall():
@@ -50,10 +56,24 @@ class DatabaseTransaction:
                 data_dict['date'] = record['date']
                 data_dict['time'] = record['time']
                 data_dict['artist'] = record['artist']
-                all_data_list.append(data_dict)
+                self.all_data_list.append(data_dict)
                 data_dict = {}
 
-        return all_data_list
+        return self.all_data_list
+
+    def convert_data(self):  # Converts the event occurrence into numpy
+        month = int(input('Please enter month in integer: '))
+        event_list = []
+        records = self.read_data()
+        for record in records:
+            if record['date'].month == month:
+                event_list.append(record['date'].day)
+
+        count = Counter(event_list)
+        y_axis = list(count.values())
+        x_axis = list(count.keys())
+
+        return y_axis, x_axis
 
 
-DatabaseTransaction.read_data()
+# DatabaseTransaction().convert_data() # TODO remove
