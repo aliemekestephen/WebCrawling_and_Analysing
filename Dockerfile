@@ -4,5 +4,5 @@ COPY requirements.txt /usr/src/app
 RUN pipenv install --no-cache-dir -r requirements.txt
 COPY . /usr/src/app
 
-CMD python menu.py
+CMD ["python", "./Utils/menu.py"]
 
