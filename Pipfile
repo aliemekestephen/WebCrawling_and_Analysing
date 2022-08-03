@@ -6,10 +6,13 @@ name = "pypi"
 [packages]
 requests = "*"
 beautifulsoup4 = "*"
-psycopg2 = "*"
-psycopg2-binary = "*"
 matplotlib = "*"
 numpy = "*"
+pandas = "*"
+sqlalchemy = "*"
+sqlalchemy-utils = "*"
+seaborn = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

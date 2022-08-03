@@ -1,6 +1,12 @@
+import io
 import numpy as np
+import sqlalchemy
 
 from collections import Counter
+
+import pandas as pd
+
+from sqlalchemy import (Table, MetaData, Column, Integer, String, Date, Time)
 from Utils.Database_Connection import DatabaseConnection
 from Utils.menu import EventRecord
 
@@ -14,66 +20,56 @@ class DatabaseTransaction:
     def __init__(self):
         self.all_data_list = None
 
-    @staticmethod
-    def create_table():
-        with DatabaseConnection() as cursor:
-            create_table = """CREATE TABLE IF NOT EXISTS crawled_event_data (
-                                                    _id             serial PRIMARY KEY,
-                                                    title           varchar,
-                                                    venue           varchar,
-                                                    date            date,
-                                                    time       time,
-                                                    artist          varchar,
-                                                    artist_works    varchar,
-                                                    image_link      varchar
-                                                    )
+    def create_table(self):
+        with DatabaseConnection() as engine:
 
-                                """
-            cursor.execute(create_table)
-            print('Table created successfully')
+            meta_data = MetaData()
+            crawled_event_data = Table('crawled_event_data', meta_data,
+                                        Column('index', Integer(), primary_key=True),
+                                        Column('title', String(200)),
+                                        Column('venue', String(200)),
+                                        Column('date', Date()),
+                                        Column('time', Time()),
+                                        Column('artist', String(200)),
+                                        Column('artist_programs', String(200)),
+                                        Column('image_link', String())
+                                       )
+            try:
+                meta_data.create_all(engine)
+                if meta_data.create_all(engine):
+                    print(f'Table {crawled_event_data} created successfully')
+            except Exception as error:
+                print(f'The following error occurred!: \n\n{error}')
 
-    @staticmethod
-    def insert_data():
-        with DatabaseConnection() as cursor:
+    def insert_data(self):
+        self.create_table()  # TODO check password request maybe create at runtime? event_data()
+        df = EventRecord().event_data()
+        with DatabaseConnection() as engine:
+            try:
+                df.to_sql('crawled_event_data', engine, if_exists='append', index=True)
+                return print('data inserted successfully!')
+            except Exception as error:
+                print(f'The following error occurred!: \n\n{error}')
 
-            insert_script = 'INSERT INTO crawled_event_data (title, venue, date, time, artist, artist_works, ' \
-                                                            'image_link) ' \
-                            'VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            insert_values = EventRecord().event_data()
+    def read_database(self):
+        with DatabaseConnection() as engine:
+            dataframe = pd.read_sql('crawled_event_data', engine)
+            return dataframe
 
-            for item in insert_values:
-                cursor.execute(insert_script, item)
-            print('Data inserted successfully')
-
-    def read_data(self):
-        data_dict = dict()
-        self.all_data_list = []
-        with DatabaseConnection() as cursor:
-            cursor.execute('SELECT * FROM crawled_event_data')
-            for record in cursor.fetchall():
-                data_dict['title'] = record['title']
-                data_dict['venue'] = record['venue']
-                data_dict['date'] = record['date']
-                data_dict['time'] = record['time']
-                data_dict['artist'] = record['artist']
-                self.all_data_list.append(data_dict)
-                data_dict = {}
-
-        return self.all_data_list
-
-    def convert_data(self):  # Converts the event occurrence into numpy
+    def convert_data(self):  # Converts the event occurrence into a list
         month = int(input('Please enter month in integer: '))
         event_list = []
-        records = self.read_data()
+        df = self.read_database()
+        records = df.values.tolist()
         for record in records:
-            if record['date'].month == month:
-                event_list.append(record['date'].day)
+            if record[3].month == month:
+                event_list.append(record[3].day)
 
         count = Counter(event_list)
         y_axis = list(count.values())
         x_axis = list(count.keys())
+        plot_data = zip(x_axis, y_axis)
+        return list(plot_data)
 
-        return y_axis, x_axis
 
-
-# DatabaseTransaction().convert_data() # TODO remove
+# DatabaseTransaction().convert_data()  # TODO remove
