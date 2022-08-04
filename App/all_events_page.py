@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
-from Locators.all_events_locator import AllEventLocators
-from Parsers.Events_Parser import ParsedEvent
+from all_events_locator import AllEventLocators
+from Events_Parser import ParsedEvent
 
 
 class AllEventsPage:

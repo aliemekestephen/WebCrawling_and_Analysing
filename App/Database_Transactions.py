@@ -1,14 +1,11 @@
-import io
-import numpy as np
-import sqlalchemy
-
 from collections import Counter
 
 import pandas as pd
 
 from sqlalchemy import (Table, MetaData, Column, Integer, String, Date, Time)
-from Utils.Database_Connection import DatabaseConnection
-from Utils.menu import EventRecord
+
+from Database_Connection import DatabaseConnection
+from Event_record import EventRecord
 
 
 class DatabaseTransaction:
@@ -70,6 +67,3 @@ class DatabaseTransaction:
         x_axis = list(count.keys())
         plot_data = zip(x_axis, y_axis)
         return list(plot_data)
-
-
-# DatabaseTransaction().convert_data()  # TODO remove

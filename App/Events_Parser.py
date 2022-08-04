@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from Locators.event_locator import EventLocators
+from event_locator import EventLocators
 
 
 class ParsedEvent:

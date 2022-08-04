@@ -1,6 +1,6 @@
 import pandas as pd
 
-from app import events
+from events import events
 
 
 class EventRecord:
@@ -20,8 +20,4 @@ class EventRecord:
 
         event_df = pd.DataFrame(self.event_entry_list, columns=['title', 'venue', 'date', 'time', 'artist',
                                                                 'artist_programs', 'image_link'])
-        # ticker = event_df.index.get_level_values(0).unique()
         return event_df
-
-
-# EventRecord().event_data()  # TODO always remove before final
