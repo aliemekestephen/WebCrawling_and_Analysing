@@ -17,24 +17,24 @@ class DatabaseTransaction:
     def __init__(self):
         self.all_data_list = None
 
-    def create_table(self):
+    @staticmethod
+    def create_table():
         with DatabaseConnection() as engine:
 
             meta_data = MetaData()
-            crawled_event_data = Table('crawled_event_data', meta_data,
-                                        Column('index', Integer(), primary_key=True),
-                                        Column('title', String(200)),
-                                        Column('venue', String(200)),
-                                        Column('date', Date()),
-                                        Column('time', Time()),
-                                        Column('artist', String(200)),
-                                        Column('artist_programs', String(200)),
-                                        Column('image_link', String())
-                                       )
+            table = Table('crawled_event_data', meta_data,
+                            Column('index', Integer(), primary_key=True),
+                            Column('title', String(200)),
+                            Column('venue', String(200)),
+                            Column('date', Date()),
+                            Column('time', Time()),
+                            Column('artist', String(200)),
+                            Column('artist_programs', String(200)),
+                            Column('image_link', String())
+                          )
             try:
                 meta_data.create_all(engine)
-                if meta_data.create_all(engine):
-                    print(f'Table {crawled_event_data} created successfully')
+                print(f'Table {table} created successfully')
             except Exception as error:
                 print(f'The following error occurred!: \n\n{error}')
 
@@ -48,10 +48,14 @@ class DatabaseTransaction:
             except Exception as error:
                 print(f'The following error occurred!: \n\n{error}')
 
-    def read_database(self):
+    @staticmethod
+    def read_database():
         with DatabaseConnection() as engine:
-            dataframe = pd.read_sql('crawled_event_data', engine)
-            return dataframe
+            try:
+                dataframe = pd.read_sql('crawled_event_data', engine)
+                return dataframe
+            except Exception as error:
+                print('Data base is empty or the following error occured: \n\n{error}')
 
     def convert_data(self):  # Converts the event occurrence into a list
         month = int(input('Please enter month in integer: '))

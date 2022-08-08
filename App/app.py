@@ -36,7 +36,7 @@ class AppRun:
             selection = input(MENU_PROMPT).lower()
 
 
-AppRun().app_menu()
+AppRun().app_menu()  # TODO Improve the app
 
 
-# TODO Improve the app
+

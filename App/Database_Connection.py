@@ -15,7 +15,7 @@ class DatabaseConnection:
 
     def __enter__(self):
         try:
-            url = f'postgresql://postgres:1Thesaint@127.0.0.1:5432/Data_Hive'
+            url = f'postgresql://postgres:1Thesaint@172.18.0.2:5432/Data_Hive' #  use localhost when connecting locally
             print('checking if database exists...')
             if not database_exists(url):
                 print('Database not found! Creating database...')
